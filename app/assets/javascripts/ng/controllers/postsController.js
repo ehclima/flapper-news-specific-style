@@ -1,13 +1,23 @@
-angular.module('flapperNews').controller('PostsCtrl', function($scope, $stateParams, postsAPI){
-	$scope.post = postsAPI.posts[$stateParams.id];
+angular.module('flapperNews').controller('PostsCtrl', function($scope, $stateParams, post, postsAPI){
+	
+	$scope.post = post.data; // vem do resolve em routeConfig.js
 
 	$scope.addComment = function(){
-	  if($scope.body === '') { return; }
-	  $scope.post.comments.push({
-	    body: $scope.body,
-	    author: 'user',
-	    upvotes: 0
-	  });
-	  $scope.body = '';
+  	if($scope.body === '') { return; }
+  
+  	postsAPI.addComment($scope.post.id, {
+    	body: $scope.body,
+    	author: 'user',
+  	}).success(function(comment) {
+    	$scope.post.comments.push(comment);
+  	});
+  	$scope.body = '';
 	};
+
+  $scope.incrementUpvotes = function(comment){
+    postsAPI.upvoteComment($scope.post, comment).success(function(data){
+      comment.upvotes += 1;
+    });
+  }
+
 });

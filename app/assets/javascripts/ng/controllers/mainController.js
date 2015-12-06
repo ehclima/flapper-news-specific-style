@@ -1,19 +1,16 @@
 // localizando módulo e criando controller
-angular.module('flapperNews').controller('MainCtrl', function($scope, posts){
+angular.module('flapperNews').controller('MainCtrl', function($scope, posts, postsAPI){
 
-	$scope.posts = posts.data;
+	$scope.posts = posts.data; // vem do resolve em routeConfig.js
 
 	$scope.addPost = function(){
 		if(!$scope.title || $scope.title === '') { return; }
 		
-		$scope.posts.push({
+		postsAPI.save({
 			title: $scope.title,
-			link: $scope.link, 
-			upvotes: 0,
-			comments: [
-				{author: 'Joe', body: 'Cool post!', upvotes: 0},
-    			{author: 'Bob', body: 'Great idea but everything is wrong!', upvotes: 0}
-			]
+			link: $scope.link
+		}).success(function(data){
+			$scope.posts.push(data);
 		});
 
 		$scope.title = '';
@@ -21,6 +18,8 @@ angular.module('flapperNews').controller('MainCtrl', function($scope, posts){
 	}
 
 	$scope.incrementUpvotes = function(post){
-		post.upvotes += 1;
+		postsAPI.upvote(post).success(function(data){
+			post.upvotes += 1;
+		});
 	}
 });
