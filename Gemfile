@@ -20,8 +20,6 @@ gem 'sprockets'
 
 gem 'responders'
 
-gem 'angular_rails_csrf'
-
 gem 'devise'
 
 # Use ActiveModel has_secure_password
